@@ -67,15 +67,21 @@
       opacity: 0;
       transition: opacity 2s ease-in;
     }
+    #reader {
+      width: 280px;
+      margin: 0 auto 20px;
+    }
   </style>
 </head>
 <body>
   <img src="https://28xj.github.io/hello/logo_clean.png" alt="Logo">
   <h3>打卡程式</h3>
 
+  <div id="reader"></div>
+
   <form id="checkin-form">
     <label for="employeeName">員工姓名（掃描）：</label>
-    <input type="text" id="employeeName" name="employeeName" required>
+    <input type="text" id="employeeName" name="employeeName" required readonly>
     <button type="submit">打卡</button>
   </form>
 
@@ -83,6 +89,38 @@
   <div class="checkmark" id="checkmark">✔</div>
 
   <script>
+    const barcodeMap = {
+      "1000000001": "何芯瑀",
+      "1000000002": "張涵雅",
+      "1000000003": "嚴儀倢",
+      "1000000004": "林俐安",
+      "1000000005": "黃慧鈴",
+      "1000000006": "彭佳琳",
+      "1000000007": "魏辰芬",
+      "1000000008": "李宜綸",
+      "1000000009": "田采璇",
+      "1000000010": "陳琬琳",
+      "1000000011": "楊汶淩",
+      "1000000012": "吳涵傑",
+      "1000000013": "林亞璍",
+      "1000000014": "吳順慧",
+      "1000000015": "浦仲豪"
+    };
+
+    const qrScanner = new Html5Qrcode("reader");
+    qrScanner.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 200 },
+      code => {
+        qrScanner.stop();
+        if (barcodeMap[code]) {
+          document.getElementById("employeeName").value = barcodeMap[code];
+        } else {
+          alert("未識別的條碼");
+        }
+      }
+    );
+
     document.getElementById("checkin-form").addEventListener("submit", function(e) {
       e.preventDefault();
       const name = document.getElementById("employeeName").value;
