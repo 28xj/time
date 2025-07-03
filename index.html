@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>打卡程式</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      padding: 30px;
+      font-family: "Microsoft JhengHei", sans-serif;
+    }
+    img {
+      height: 60px;
+      margin-bottom: 20px;
+    }
+    form {
+      display: inline-block;
+      text-align: left;
+      width: 280px;
+    }
+    label {
+      display: block;
+      margin-top: 14px;
+      color: #fff;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 6px 12px;
+      margin-top: 5px;
+      background-color: #fff;
+      color: #000;
+      border: none;
+      font-size: 14px;
+      border-radius: 24px;
+      box-sizing: border-box;
+    }
+    input:focus {
+      outline: none;
+      background-color: #f0f0f0;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      background-color: #fff;
+      color: #000;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 24px;
+      font-family: "Microsoft JhengHei", sans-serif;
+    }
+    .success {
+      margin-top: 20px;
+      opacity: 0;
+      transition: opacity 2s ease-in;
+      font-size: 16px;
+      color: #fff;
+    }
+    .checkmark {
+      font-size: 32px;
+      color: #fff;
+      opacity: 0;
+      transition: opacity 2s ease-in;
+    }
+  </style>
+</head>
+<body>
+  <img src="https://28xj.github.io/hello/logo_clean.png" alt="Logo">
+  <h3>打卡程式</h3>
+
+  <form id="checkin-form">
+    <label for="employeeName">員工姓名（掃描）：</label>
+    <input type="text" id="employeeName" name="employeeName" required>
+    <button type="submit">打卡</button>
+  </form>
+
+  <div class="success" id="successMsg">打卡成功</div>
+  <div class="checkmark" id="checkmark">✔</div>
+
+  <script>
+    document.getElementById("checkin-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const name = document.getElementById("employeeName").value;
+      const timestamp = new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" });
+
+      const formData = new FormData();
+      formData.append("employeeName", name);
+      formData.append("timestamp", timestamp);
+
+      fetch("https://script.google.com/macros/s/AKfycbzaiqH4S0cNW_w5yckGfvgyBR3ga6ILF4960rtDdinUXJUGj1U0sB8ahHsudZFTfPjnFA/exec", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.text())
+      .then(result => {
+        document.getElementById("successMsg").style.opacity = 1;
+        document.getElementById("checkmark").style.opacity = 1;
+        setTimeout(() => location.reload(), 3000);
+      })
+      .catch(error => {
+        alert("打卡失敗: " + error);
+      });
+    });
+  </script>
+</body>
+</html>
